@@ -33,9 +33,8 @@ module ActiveCampaign
 
     attr_accessor :config
 
-    def initialize(configuration = nil)
+    def initialize(configuration = ActiveCampaign.configuration)
       self.config = configuration.is_a?(OpenStruct) ? configuration : OpenStruct.new(configuration)
-      self.config ||= ActiveCampaign.configuration
     end
 
     # Compares client options to a Hash of requested options
