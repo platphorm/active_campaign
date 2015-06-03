@@ -112,10 +112,6 @@ module ActiveCampaign
       q.merge!(api_key: api_key,
                api_action: api_method.to_s,
                api_output: api_output)
-      q.merge!(
-        key: key,
-        actid: actid
-      ) if options.delete(:tracking)
       q.merge!(options) if method == :get
       q
     end
@@ -127,6 +123,10 @@ module ActiveCampaign
       options[:field] = fields.inject({}) do |hash, (k, v)|
         hash.merge("%#{k}%,0" => v)
       end
+      options.merge!(
+        key: key,
+        actid: actid
+      ) if options.delete(:tracking)
 
       options.to_query
     end
