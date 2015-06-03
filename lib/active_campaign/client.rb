@@ -28,7 +28,7 @@ module ActiveCampaign
     include ActiveCampaign::Client::Tracks
     include ActiveCampaign::Client::Users
 
-    delegate :api_key, :api_output, :api_endpoint, :user_agent, :log, :log_level,
+    delegate :api_key, :api_output, :api_endpoint, :actid, :key, :user_agent, :log, :log_level,
              :logger, :mash, :debug, to: :config
 
     attr_accessor :config
@@ -72,6 +72,16 @@ module ActiveCampaign
       request :post, api_method, options
     end
 
+    def tracking_options
+      {
+        api_endpoint: Configuration::TRACKING_ENDPONT,
+        query: {
+          actid: actid,
+          key: key
+        }
+      }
+    end
+
     private
 
     def request(method, api_method, data)
@@ -83,7 +93,7 @@ module ActiveCampaign
 
     def create_request(method, api_method, options = {})
       req = HTTPI::Request.new(
-        url: File.join(api_endpoint),
+        url: endpoint_url(options),
         headers: { 'User-Agent' => user_agent },
         query: query(method, api_method, options),
         body: body(method, api_method, options)
@@ -93,14 +103,20 @@ module ActiveCampaign
       req
     end
 
+    def endpoint_url(options)
+      options[:tracking] ? Configuration::TRACKING_ENDPONT : File.join(api_endpoint)
+    end
+
     def query(method, api_method, options = {})
       q = options.delete(:query) { Hash.new }
       q.merge!(api_key: api_key,
                api_action: api_method.to_s,
                api_output: api_output)
-
+      q.merge!(
+        key: key,
+        actid: actid
+      ) if options.delete(:tracking)
       q.merge!(options) if method == :get
-
       q
     end
 

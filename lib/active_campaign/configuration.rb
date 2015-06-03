@@ -3,6 +3,7 @@ require 'active_support/core_ext/module/delegation'
 module ActiveCampaign
   module Configuration
     API_ENDPOINT = 'https://subdomain.activehosted.com/admin/api.php'.freeze
+    TRACKING_ENDPONT = 'https://trackcmp.net/event'.freeze    
     USER_AGENT   = "ActiveCampaign Ruby Gem #{ActiveCampaign::VERSION}".freeze
     API_OUTPUT   = 'json'.freeze
 
@@ -21,6 +22,8 @@ module ActiveCampaign
         api_endpoint: API_ENDPOINT,
         api_output: API_OUTPUT,
         user_agent: USER_AGENT,
+        actid: nil,
+        key: nil,
         log: false,
         logger: nil,
         log_level: :info,

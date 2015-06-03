@@ -28,5 +28,13 @@ module ActiveCampaign
         send(method, __method__, options)
       end
     end
+
+    def define_tracking_api_method(method, resource, call)
+      define_method "#{resource}_#{call}" do |options = {}|
+        options[:tracking] = true
+        send(method, __method__, options)
+      end
+    end
+    
   end
 end
